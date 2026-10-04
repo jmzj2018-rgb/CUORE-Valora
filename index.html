@@ -420,45 +420,46 @@
     }
 
     .info-tooltip-bubble {
-      visibility: hidden;
-      opacity: 0;
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%) translateY(4px);
-      background-color: #0f172a;
-      color: #ffffff;
-      font-size: 0.72rem;
-      font-weight: 500;
-      padding: 8px 12px;
-      border-radius: 8px;
-      white-space: normal;
-      width: max-content;
-      max-width: 220px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 100;
-      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
-      pointer-events: none;
-    }
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  /* Cambiamos el centrado rígido para anclar desde la izquierda con un pequeño margen */
+  left: 0;
+  transform: translateY(4px);
+  background-color: #0f172a;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: normal;
+  width: max-content;
+  max-width: 200px; /* Reducimos ligeramente el ancho máximo para pantallas pequeñas */
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+}
 
-    .info-tooltip-bubble::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border-width: 5px;
-      border-style: solid;
-      border-color: #0f172a transparent transparent transparent;
-    }
+.info-tooltip-bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  /* Alineamos la flechita con el botón ⓘ que está a la izquierda */
+  left: 10px;
+  transform: none;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #0f172a transparent transparent transparent;
+}
 
-    .info-tooltip-bubble.visible {
-      visibility: visible;
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
+.info-tooltip-bubble.visible {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
     /* --- MODAL DE INSTALACIÓN MULTIPLATAFORMA --- */
     .modal-overlay {
       position: fixed;
@@ -720,7 +721,7 @@
   </div>
 
   <script>
-    const APP_VERSION = '1.2.2';
+    const APP_VERSION = '1.2.3';
 
     // Fórmulas alométricas generales (Cornell, et al. 2008)
     const generalCoeffs = [
