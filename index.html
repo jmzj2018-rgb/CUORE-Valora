@@ -385,8 +385,78 @@
       font-size: 0.72rem;
       color: var(--text-muted);
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      overflow: visible;
+    }
+
+    /* --- ESTILOS PARA ICONOS DE INFORMACIÓN Y BURBUJAS (TOOLTIPS) --- */
+    .info-container {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .info-icon-btn {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: var(--primary-dark);
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      line-height: 1;
+    }
+
+    .info-icon-btn:active {
+      transform: scale(0.92);
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .info-tooltip-bubble {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background-color: #0f172a;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: normal;
+      width: max-content;
+      max-width: 220px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+      pointer-events: none;
+    }
+
+    .info-tooltip-bubble::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: #0f172a transparent transparent transparent;
+    }
+
+    .info-tooltip-bubble.visible {
+      visibility: visible;
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     /* --- MODAL DE INSTALACIÓN MULTIPLATAFORMA --- */
@@ -511,10 +581,10 @@
     </div>
 
     <!-- TAB 1: RANGOS ABSOLUTOS -->
-    <section id="tabRanges" class="card" style="padding: 0; overflow: hidden;">
+    <section id="tabRanges" class="card" style="padding: 0; overflow: visible;">
       
       <!-- SELECCIÓN GENERAL / RAZA -->
-      <div style="padding: 10px 14px; background: #ffffff; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: center;">
+      <div style="padding: 10px 14px; background: #ffffff; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: center; border-radius: 16px 16px 0 0;">
         <button id="btnModeGeneral" onclick="setBreedMode('general')" class="breed-toggle-btn active">
           General
         </button>
@@ -526,14 +596,18 @@
           
           <div id="breedDropdown" class="breed-dropdown hidden">
             <div onclick="selectBreed('golden')" class="breed-option">Golden Retriever</div>
-            <div onclick="selectBreed('doberman')" class="breed-option">Doberman</div>
+            <div onclick="selectBreed('doberman')" class="breed-option">Boxer</div>
             <div onclick="selectBreed('boxer')" class="breed-option">Boxer</div>
           </div>
         </div>
       </div>
 
       <div style="padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-        <span id="rangeAuthorLabel" style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">Formulas de Cornell, et al (2008)</span>
+        <!-- ICONO Y BURBUJA DE INFORMACIÓN DE LA REFERENCIA DE RANGOS ABSOLUTOS -->
+        <div class="info-container">
+          <button class="info-icon-btn" onclick="toggleTooltip(event, 'rangeTooltip')" aria-label="Información de referencia">ⓘ</button>
+          <div id="rangeTooltip" class="info-tooltip-bubble">Formulas de Cornell, et al (2008)</div>
+        </div>
         <span id="weightBadge" class="badge-weight">Sin Peso</span>
       </div>
 
@@ -579,7 +653,14 @@
         </div>
         
         <div class="single-line-ref">
-          <span id="normAuthorLabel">Ref:</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span>Ref:</span>
+            <!-- ICONO DE INFORMACIÓN PARA REFERENCIA DE NORMALIZADOS -->
+            <div class="info-container">
+              <button class="info-icon-btn" onclick="toggleTooltip(event, 'normTooltip')" aria-label="Información de referencia">ⓘ</button>
+              <div id="normTooltip" class="info-tooltip-bubble">Ref. Visser, et al (2019)</div>
+            </div>
+          </div>
           <strong id="normRefRange" style="color: var(--text); font-size: 0.8rem; margin-left: 6px;">--</strong>
         </div>
       </div>
@@ -640,7 +721,7 @@
   </div>
 
   <script>
-    const APP_VERSION = '1.1.8';
+    const APP_VERSION = '1.1.9';
 
     // Fórmulas alométricas generales (Cornell, et al. 2008)
     const generalCoeffs = [
@@ -713,6 +794,9 @@
       nLVIDs: ''
     };
 
+    // Control de timers para ocultación temporal de tooltips
+    const activeTooltipTimers = {};
+
     document.addEventListener('DOMContentLoaded', () => {
       applyDynamicVersion();
       renderAbsoluteTable();
@@ -756,6 +840,34 @@
       normValuesMemory.nLVIDd = '';
       normValuesMemory.nLVIDs = '';
       document.getElementById('measuredX').value = '';
+    }
+
+    /* MOSTRAR / OCULTAR BURBUJA INFORMATIVA TEMPORAL */
+    function toggleTooltip(event, tooltipId) {
+      if (event) event.stopPropagation();
+      const tooltip = document.getElementById(tooltipId);
+      if (!tooltip) return;
+
+      const isVisible = tooltip.classList.contains('visible');
+
+      // Oculta otros tooltips visibles
+      document.querySelectorAll('.info-tooltip-bubble').forEach(t => {
+        t.classList.remove('visible');
+      });
+
+      if (!isVisible) {
+        tooltip.classList.add('visible');
+
+        // Limpia el temporizador anterior si existía
+        if (activeTooltipTimers[tooltipId]) {
+          clearTimeout(activeTooltipTimers[tooltipId]);
+        }
+
+        // Se oculta automáticamente tras 3 segundos (3000ms)
+        activeTooltipTimers[tooltipId] = setTimeout(() => {
+          tooltip.classList.remove('visible');
+        }, 3000);
+      }
     }
 
     /* CONTROL DE SELECCIÓN DE RAZAS */
@@ -809,9 +921,8 @@
         // Al cambiar a la pestaña de "Rangos Absolutos", se borran las memorias
         resetNormMemory();
       } else {
-        tabRanges.classList.hidden = true;
-        tabNorm.classList.remove('hidden');
         tabRanges.classList.add('hidden');
+        tabNorm.classList.remove('hidden');
         btnNorm.classList.add('active');
         btnRanges.classList.remove('active');
 
@@ -839,11 +950,11 @@
 
     function renderAbsoluteTable(weight = null) {
       const tbody = document.getElementById('absoluteRangesBody');
-      const rangeAuthorLabel = document.getElementById('rangeAuthorLabel');
+      const rangeTooltip = document.getElementById('rangeTooltip');
       tbody.innerHTML = '';
 
       if (currentBreedMode === 'general') {
-        rangeAuthorLabel.textContent = 'Formulas de Cornell, et al (2008)';
+        if (rangeTooltip) rangeTooltip.textContent = 'Formulas de Cornell, et al (2008)';
         
         generalCoeffs.forEach(item => {
           let rangeText = '--';
@@ -866,7 +977,7 @@
 
       } else {
         const breedInfo = fixedBreedsData[currentBreedMode];
-        rangeAuthorLabel.textContent = breedInfo.author;
+        if (rangeTooltip) rangeTooltip.textContent = breedInfo.author;
 
         generalCoeffs.forEach(item => {
           let rangeText = '--';
@@ -920,11 +1031,11 @@
       const normValDisplay = document.getElementById('normValDisplay');
       const normStatusBadge = document.getElementById('normStatusBadge');
       const normRefRange = document.getElementById('normRefRange');
-      const normAuthorLabel = document.getElementById('normAuthorLabel');
+      const normTooltip = document.getElementById('normTooltip');
 
       const coeffData = normalizedCoeffs[selectedNormKey];
       normRefRange.textContent = `${coeffData.min} - ${coeffData.max}`;
-      normAuthorLabel.textContent = `Ref. ${coeffData.author}:`;
+      if (normTooltip) normTooltip.textContent = `Ref. ${coeffData.author}`;
 
       if (isNaN(weight) || weight <= 0 || isNaN(measuredX) || measuredX <= 0) {
         normValDisplay.textContent = '--';
@@ -1074,12 +1185,19 @@
       document.getElementById('installModal').classList.add('hidden');
     }
 
-    // Cerrar el desplegable de raza al hacer clic fuera
+    // Cerrar el desplegable de raza y tooltips al hacer clic fuera
     document.addEventListener('click', (e) => {
       const breedContainer = document.getElementById('btnModeBreed');
       const dropdown = document.getElementById('breedDropdown');
       if (breedContainer && dropdown && !breedContainer.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.classList.add('hidden');
+      }
+
+      // Ocultar burbujas al tocar fuera
+      if (!e.target.closest('.info-container')) {
+        document.querySelectorAll('.info-tooltip-bubble').forEach(t => {
+          t.classList.remove('visible');
+        });
       }
     });
   </script>
