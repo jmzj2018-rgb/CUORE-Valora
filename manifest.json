@@ -1,7 +1,9 @@
 {
   "name": "CUORE Valora",
   "short_name": "CUORE Valora",
+  "description": "Herramienta de referencia ecocardiográfica veterinaria para Canino y Felino.",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0284c7",
