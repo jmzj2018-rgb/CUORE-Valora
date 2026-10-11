@@ -171,6 +171,43 @@
       gap: 6px;
     }
 
+    /* BOTONES DE SELECCIÓN DE ESPECIE */
+    .species-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .species-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .species-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .species-btn.active {
+      border-color: var(--primary);
+      background: #f0f9ff;
+      color: var(--primary-dark);
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.15);
+    }
+
     .input-wrapper {
       position: relative;
       display: flex;
@@ -420,46 +457,45 @@
     }
 
     .info-tooltip-bubble {
-  visibility: hidden;
-  opacity: 0;
-  position: absolute;
-  bottom: calc(100% + 8px);
-  /* Cambiamos el centrado rígido para anclar desde la izquierda con un pequeño margen */
-  left: 0;
-  transform: translateY(4px);
-  background-color: #0f172a;
-  color: #ffffff;
-  font-size: 0.72rem;
-  font-weight: 500;
-  padding: 8px 12px;
-  border-radius: 8px;
-  white-space: normal;
-  width: max-content;
-  max-width: 200px; /* Reducimos ligeramente el ancho máximo para pantallas pequeñas */
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
-  pointer-events: none;
-}
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 0;
+      transform: translateY(4px);
+      background-color: #0f172a;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: normal;
+      width: max-content;
+      max-width: 200px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+      pointer-events: none;
+    }
 
-.info-tooltip-bubble::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  /* Alineamos la flechita con el botón ⓘ que está a la izquierda */
-  left: 10px;
-  transform: none;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #0f172a transparent transparent transparent;
-}
+    .info-tooltip-bubble::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 10px;
+      transform: none;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #0f172a transparent transparent transparent;
+    }
 
-.info-tooltip-bubble.visible {
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(0);
-}
+    .info-tooltip-bubble.visible {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* --- MODAL DE INSTALACIÓN MULTIPLATAFORMA --- */
     .modal-overlay {
       position: fixed;
@@ -554,7 +590,7 @@
         </svg>
         <div>
           <h1 style="font-size: 1.1rem; font-weight: 700;">CUORE Valora</h1>
-          <p style="font-size: 0.75rem; opacity: 0.9;">Modo M en ecocardiografía canina</p>
+          <p style="font-size: 0.75rem; opacity: 0.9;">Modo M en ecocardiografía veterinaria</p>
         </div>
       </div>
       <!-- BOTÓN INSTALAR -->
@@ -566,9 +602,23 @@
 
   <!-- CONTENIDO PRINCIPAL -->
   <main>
-    <!-- PESO GLOBAL -->
+    <!-- SELECCIÓN DE ESPECIE Y PESO GLOBAL -->
     <div class="card">
-      <div class="label-title">Peso del Paciente (Kg)</div>
+      <div class="label-title">Especie</div>
+      <div class="species-selector">
+        <button id="btnSpeciesDog" onclick="selectSpecies('dog')" class="species-btn active">
+          <!-- Silueta Canina -->
+          <svg viewBox="0 0 24 24"><path d="M19,13C19,11.89 18.1,11 17,11C16.82,11 16.65,11.03 16.5,11.08L14.77,8.22C14.28,7.4 13.38,6.9 12.42,6.9H9.5L8.71,4.55C8.42,3.68 7.61,3.09 6.69,3.09H3V5.09H6.69L8.19,9.59L6.5,12.5C6.18,13.06 6,13.7 6,14.39V19H8V15H11.5L13.5,19H15.5L13.75,15.5C14.5,15.2 15,14.4 15,13.5V13H17V15H19V13M12,11H9.8L10.9,9.1H12.42C12.8,9.1 13.16,9.3 13.35,9.63L14.17,11H12Z"/></svg>
+          <span>Canino</span>
+        </button>
+        <button id="btnSpeciesCat" onclick="selectSpecies('cat')" class="species-btn">
+          <!-- Silueta Felina -->
+          <svg viewBox="0 0 24 24"><path d="M12,2A3,3 0 0,0 9,5C9,5.25 9.03,5.5 9.09,5.74C8.42,6 7.82,6.39 7.33,6.88C6.35,7.86 5.8,9.18 5.8,10.56V11.5C5.8,12.33 6.47,13 7.3,13H8.3V19A2,2 0 0,0 10.3,21H13.7A2,2 0 0,0 15.7,19V13H16.7A1.5,1.5 0 0,0 18.2,11.5V10.56C18.2,9.18 17.65,7.86 16.67,6.88C16.18,6.39 15.58,6 14.91,5.74C14.97,5.5 15,5.25 15,5A3,3 0 0,0 12,2M10,13.5A0.75,0.75 0 0,1 10.75,14.25A0.75,0.75 0 0,1 10,15A0.75,0.75 0 0,1 9.25,14.25A0.75,0.75 0 0,1 10,13.5M14,13.5A0.75,0.75 0 0,1 14.75,14.25A0.75,0.75 0 0,1 14,15A0.75,0.75 0 0,1 13.25,14.25A0.75,0.75 0 0,1 14,13.5Z"/></svg>
+          <span>Felino</span>
+        </button>
+      </div>
+
+      <div class="label-title" style="margin-top: 12px;">Peso del Paciente (Kg)</div>
       <div class="input-wrapper">
         <input type="number" id="globalWeight" step="0.1" min="0.1" placeholder="Ej. 10.5" oninput="onWeightChange(this.value)">
         <span class="input-unit">kg</span>
@@ -584,8 +634,8 @@
     <!-- TAB 1: RANGOS ABSOLUTOS -->
     <section id="tabRanges" class="card" style="padding: 0; overflow: visible;">
       
-      <!-- SELECCIÓN GENERAL / RAZA -->
-      <div style="padding: 10px 14px; background: #ffffff; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: center; border-radius: 16px 16px 0 0;">
+      <!-- SELECCIÓN GENERAL / RAZA (SOLO CANINOS) -->
+      <div id="breedBar" style="padding: 10px 14px; background: #ffffff; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: center; border-radius: 16px 16px 0 0;">
         <button id="btnModeGeneral" onclick="setBreedMode('general')" class="breed-toggle-btn active">
           General
         </button>
@@ -617,7 +667,7 @@
           <thead>
             <tr>
               <th style="text-align: left;">Parámetro</th>
-              <th style="text-align: center;">Rango Ref. (cm)</th>
+              <th style="text-align: center;">Rango Ref.</th>
             </tr>
           </thead>
           <tbody id="absoluteRangesBody"></tbody>
@@ -655,7 +705,6 @@
         
         <div class="single-line-ref">
           <div style="display: flex; align-items: center; gap: 6px;">
-            <!-- ICONO DE INFORMACIÓN PARA REFERENCIA DE NORMALIZADOS (Se eliminó el span con "Ref:") -->
             <div class="info-container">
               <button class="info-icon-btn" onclick="toggleTooltip(event, 'normTooltip')" aria-label="Información de referencia">ⓘ</button>
               <div id="normTooltip" class="info-tooltip-bubble">Ref. Visser, et al (2019)</div>
@@ -721,20 +770,24 @@
   </div>
 
   <script>
-    const APP_VERSION = '1.2.4';
+    const APP_VERSION = '1.3.1';
 
-    // Fórmulas alométricas generales (Cornell, et al. 2008)
-    const generalCoeffs = [
-      { name: 'IVSd',   a: 0.29, b: 0.59, c: 0.241 },
-      { name: 'LVIDd',  a: 1.27, b: 1.85, c: 0.294 },
-      { name: 'LVPWd',  a: 0.29, b: 0.60, c: 0.232 },
-      { name: 'IVSs',   a: 0.43, b: 0.79, c: 0.240 },
-      { name: 'LVIDs',  a: 0.71, b: 1.26, c: 0.315 },
-      { name: 'LVPWs',  a: 0.48, b: 0.87, c: 0.222 },
-      { name: 'LA (Sx)', a: 0.59, b: 0.97, c: 0.345 }
+    let currentSpecies = 'dog'; // 'dog' | 'cat'
+    let currentBreedMode = 'general';
+
+    // Fórmulas alométricas generales Caninas (Cornell, et al. 2008)
+    const generalDogCoeffs = [
+      { name: 'IVSd',   a: 0.29, b: 0.59, c: 0.241, unit: 'cm' },
+      { name: 'LVIDd',  a: 1.27, b: 1.85, c: 0.294, unit: 'cm' },
+      { name: 'LVPWd',  a: 0.29, b: 0.60, c: 0.232, unit: 'cm' },
+      { name: 'IVSs',   a: 0.43, b: 0.79, c: 0.240, unit: 'cm' },
+      { name: 'LVIDs',  a: 0.71, b: 1.26, c: 0.315, unit: 'cm' },
+      { name: 'LVPWs',  a: 0.48, b: 0.87, c: 0.222, unit: 'cm' },
+      { name: 'LA (Sx)', a: 0.59, b: 0.97, c: 0.345, unit: 'cm' },
+      { name: 'FS',      isFixedPercent: true, min: 28.00, max: 42.00, unit: '%' }
     ];
 
-    // Valores de referencia fijos y citas específicas por Raza
+    // Valores de referencia fijos y citas específicas por Raza (Canino)
     const fixedBreedsData = {
       golden: {
         label: 'Golden Retriever',
@@ -746,7 +799,8 @@
           'IVSs': { min: 1.0, max: 1.17 },
           'LVIDs': { min: 1.8, max: 3.5 },
           'LVPWs': { min: 1.0, max: 1.9 },
-          'LA (Sx)': { isGeneralFormula: true }
+          'LA (Sx)': { isGeneralFormula: true },
+          'FS': { min: 24.09, max: 53.91, unit: '%' }
         }
       },
       doberman: {
@@ -759,7 +813,8 @@
           'IVSs': { min: 0.5, max: 0.58 },
           'LVIDs': { min: 0.94, max: 1.4 },
           'LVPWs': { min: 0.5, max: 0.58 },
-          'LA (Sx)': { isGeneralFormula: true }
+          'LA (Sx)': { isGeneralFormula: true },
+          'FS': { min: 29.74, max: 38.26, unit: '%' }
         }
       },
       boxer: {
@@ -772,12 +827,22 @@
           'IVSs': { min: 0.35, max: 1.03 },
           'LVIDs': { min: 0.68, max: 1.35 },
           'LVPWs': { min: 0.52, max: 0.87 },
-          'LA (Sx)': { isGeneralFormula: true }
+          'LA (Sx)': { isGeneralFormula: true },
+          'FS': { min: 21.00, max: 51.00, unit: '%' }
         }
       }
     };
 
-    let currentBreedMode = 'general';
+    // Valores Fijos para Felinos (Gato)
+    const fixedCatRanges = [
+      { name: 'IVSd',   min: 0.30, max: 0.59, unit: 'cm' },
+      { name: 'LVIDd',  min: 1.08, max: 2.14, unit: 'cm' },
+      { name: 'LVPWd',  min: 0.25, max: 0.59, unit: 'cm' },
+      { name: 'IVSs',   min: 0.40, max: 0.90, unit: 'cm' },
+      { name: 'LVIDs',  min: 0.40, max: 1.12, unit: 'cm' },
+      { name: 'LVPWs',  min: 0.43, max: 0.98, unit: 'cm' },
+      { name: 'FS',      min: 33.00, max: 66.00, unit: '%' }
+    ];
 
     const normalizedCoeffs = {
       nLA:    { name: 'nLA (Lx)', c: 0.309, min: 1.19, max: 1.57, author: 'Visser, et al (2019)' },
@@ -787,14 +852,12 @@
 
     let selectedNormKey = 'nLA';
 
-    // Memoria independiente para los datos introducidos en cada parámetro normalizado
     const normValuesMemory = {
       nLA: '',
       nLVIDd: '',
       nLVIDs: ''
     };
 
-    // Control de timers para ocultación temporal de tooltips
     const activeTooltipTimers = {};
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -835,6 +898,26 @@
       }
     }
 
+    function selectSpecies(species) {
+      currentSpecies = species;
+      const btnDog = document.getElementById('btnSpeciesDog');
+      const btnCat = document.getElementById('btnSpeciesCat');
+      const breedBar = document.getElementById('breedBar');
+
+      if (species === 'dog') {
+        btnDog.classList.add('active');
+        btnCat.classList.remove('active');
+        breedBar.style.display = 'flex';
+      } else {
+        btnCat.classList.add('active');
+        btnDog.classList.remove('active');
+        breedBar.style.display = 'none';
+      }
+
+      const weight = parseFloat(document.getElementById('globalWeight').value);
+      renderAbsoluteTable(weight);
+    }
+
     function resetNormMemory() {
       normValuesMemory.nLA = '';
       normValuesMemory.nLVIDd = '';
@@ -842,7 +925,6 @@
       document.getElementById('measuredX').value = '';
     }
 
-    /* MOSTRAR / OCULTAR BURBUJA INFORMATIVA TEMPORAL */
     function toggleTooltip(event, tooltipId) {
       if (event) event.stopPropagation();
       const tooltip = document.getElementById(tooltipId);
@@ -850,7 +932,6 @@
 
       const isVisible = tooltip.classList.contains('visible');
 
-      // Oculta otros tooltips visibles
       document.querySelectorAll('.info-tooltip-bubble').forEach(t => {
         t.classList.remove('visible');
       });
@@ -858,19 +939,16 @@
       if (!isVisible) {
         tooltip.classList.add('visible');
 
-        // Limpia el temporizador anterior si existía
         if (activeTooltipTimers[tooltipId]) {
           clearTimeout(activeTooltipTimers[tooltipId]);
         }
 
-        // Se oculta automáticamente tras 3 segundos (3000ms)
         activeTooltipTimers[tooltipId] = setTimeout(() => {
           tooltip.classList.remove('visible');
         }, 3000);
       }
     }
 
-    /* CONTROL DE SELECCIÓN DE RAZAS */
     function toggleBreedDropdown() {
       const dropdown = document.getElementById('breedDropdown');
       dropdown.classList.toggle('hidden');
@@ -881,10 +959,8 @@
       const breedData = fixedBreedsData[breedKey];
       
       document.getElementById('breedBtnText').textContent = breedData.label;
-      
       document.getElementById('btnModeBreed').classList.add('active');
       document.getElementById('btnModeGeneral').classList.remove('active');
-      
       document.getElementById('breedDropdown').classList.add('hidden');
       
       const weight = parseFloat(document.getElementById('globalWeight').value);
@@ -894,9 +970,7 @@
     function setBreedMode(mode) {
       if (mode === 'general') {
         currentBreedMode = 'general';
-        
         document.getElementById('breedBtnText').textContent = 'Raza ▾';
-        
         document.getElementById('btnModeGeneral').classList.add('active');
         document.getElementById('btnModeBreed').classList.remove('active');
         document.getElementById('breedDropdown').classList.add('hidden');
@@ -918,7 +992,6 @@
         btnRanges.classList.add('active');
         btnNorm.classList.remove('active');
 
-        // Al cambiar a la pestaña de "Rangos Absolutos", se borran las memorias
         resetNormMemory();
       } else {
         tabRanges.classList.add('hidden');
@@ -926,7 +999,6 @@
         btnNorm.classList.add('active');
         btnRanges.classList.remove('active');
 
-        // Carga la medida correspondiente al parámetro activo
         document.getElementById('measuredX').value = normValuesMemory[selectedNormKey];
         calculateNormalization();
       }
@@ -953,19 +1025,15 @@
       const rangeTooltip = document.getElementById('rangeTooltip');
       tbody.innerHTML = '';
 
-      if (currentBreedMode === 'general') {
-        if (rangeTooltip) rangeTooltip.textContent = 'Formulas de Cornell, et al (2008)';
-        
-        generalCoeffs.forEach(item => {
-          let rangeText = '--';
-          let highlightStyle = 'color: var(--text-muted);';
+      if (currentSpecies === 'cat') {
+        if (rangeTooltip) rangeTooltip.textContent = 'Valores de referencia Felinos fijos';
 
-          if (weight && weight > 0) {
-            const inf = (item.a * Math.pow(weight, item.c)).toFixed(2);
-            const sup = (item.b * Math.pow(weight, item.c)).toFixed(2);
-            rangeText = `${inf} - ${sup}`;
-            highlightStyle = 'color: var(--primary-dark); font-weight: 700; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;';
-          }
+        fixedCatRanges.forEach(item => {
+          const rangeText = item.unit === '%' 
+            ? `${item.min.toFixed(2)}\% -${item.max.toFixed(2)}%`
+            : `${item.min.toFixed(2)} -${item.max.toFixed(2)} cm`;
+
+          const highlightStyle = 'color: var(--primary-dark); font-weight: 700; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;';
 
           const tr = document.createElement('tr');
           tr.innerHTML = `
@@ -976,36 +1044,65 @@
         });
 
       } else {
-        const breedInfo = fixedBreedsData[currentBreedMode];
-        if (rangeTooltip) rangeTooltip.textContent = breedInfo.author;
-
-        generalCoeffs.forEach(item => {
-          let rangeText = '--';
-          let highlightStyle = 'color: var(--primary-dark); font-weight: 700; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;';
+        // Canino
+        if (currentBreedMode === 'general') {
+          if (rangeTooltip) rangeTooltip.textContent = 'Formulas de Cornell, et al (2008)';
           
-          const breedParam = breedInfo.ranges[item.name];
+          generalDogCoeffs.forEach(item => {
+            let rangeText = '--';
+            let highlightStyle = 'color: var(--text-muted);';
 
-          // Si el parámetro es LA (Sx), se calcula por peso con la fórmula general
-          if (breedParam && breedParam.isGeneralFormula) {
-            if (weight && weight > 0) {
+            if (item.isFixedPercent) {
+              rangeText = `${item.min.toFixed(2)}\% -${item.max.toFixed(2)}%`;
+              highlightStyle = 'color: var(--primary-dark); font-weight: 700; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;';
+            } else if (weight && weight > 0) {
               const inf = (item.a * Math.pow(weight, item.c)).toFixed(2);
               const sup = (item.b * Math.pow(weight, item.c)).toFixed(2);
-              rangeText = `${inf} - ${sup}`;
-            } else {
-              rangeText = '-- (Ingrese Peso)';
-              highlightStyle = 'color: var(--text-muted);';
+              rangeText = `${inf} -${sup} cm`;
+              highlightStyle = 'color: var(--primary-dark); font-weight: 700; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;';
             }
-          } else if (breedParam) {
-            rangeText = `${breedParam.min} - ${breedParam.max}`;
-          }
 
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td style="font-weight: 600; text-align: left;">${item.name}</td>
-            <td style="text-align: center;"><span style="${highlightStyle}">${rangeText}</span></td>
-          `;
-          tbody.appendChild(tr);
-        });
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td style="font-weight: 600; text-align: left;">${item.name}</td>
+              <td style="text-align: center;"><span style="${highlightStyle}">${rangeText}</span></td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+        } else {
+          // Razas caninas
+          const breedInfo = fixedBreedsData[currentBreedMode];
+          if (rangeTooltip) rangeTooltip.textContent = breedInfo.author;
+
+          generalDogCoeffs.forEach(item => {
+            let rangeText = '--';
+            let highlightStyle = 'color: var(--primary-dark); font-weight: 700; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;';
+            
+            const breedParam = breedInfo.ranges[item.name];
+
+            if (breedParam && breedParam.isGeneralFormula) {
+              if (weight && weight > 0) {
+                const inf = (item.a * Math.pow(weight, item.c)).toFixed(2);
+                const sup = (item.b * Math.pow(weight, item.c)).toFixed(2);
+                rangeText = `${inf} -${sup} cm`;
+              } else {
+                rangeText = '-- (Ingrese Peso)';
+                highlightStyle = 'color: var(--text-muted);';
+              }
+            } else if (breedParam) {
+              const unitStr = breedParam.unit === '%' ? '%' : ' cm';
+              rangeText = `${breedParam.min} - ${breedParam.max}${unitStr}`;
+            }
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td style="font-weight: 600; text-align: left;">${item.name}</td>
+              <td style="text-align: center;"><span style="${highlightStyle}">${rangeText}</span></td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
       }
     }
 
@@ -1014,13 +1111,11 @@
       document.querySelectorAll('.norm-param-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById(`btn-${key}`).classList.add('active');
 
-      // Recupera el valor asignado a la nueva pestaña o lo deja vacío
       document.getElementById('measuredX').value = normValuesMemory[selectedNormKey];
       calculateNormalization();
     }
 
     function onMeasuredInput(value) {
-      // Guarda la medición ingresada en la memoria del parámetro actualmente activo
       normValuesMemory[selectedNormKey] = value;
       calculateNormalization();
     }
@@ -1034,7 +1129,7 @@
       const normTooltip = document.getElementById('normTooltip');
 
       const coeffData = normalizedCoeffs[selectedNormKey];
-      normRefRange.textContent = `${coeffData.min} - ${coeffData.max}`;
+      normRefRange.textContent = `${coeffData.min} -${coeffData.max}`;
       if (normTooltip) normTooltip.textContent = `Ref. ${coeffData.author}`;
 
       if (isNaN(weight) || weight <= 0 || isNaN(measuredX) || measuredX <= 0) {
@@ -1073,133 +1168,4 @@
         const swCode = `
           const CACHE_NAME = '${CACHE_NAME}';
 
-          self.addEventListener('install', e => {
-            self.skipWaiting();
-          });
-
-          self.addEventListener('activate', e => {
-            e.waitUntil(
-              caches.keys().then(keys => {
-                return Promise.all(
-                  keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-                );
-              }).then(() => self.clients.claim())
-            );
-          });
-
-          self.addEventListener('fetch', e => {
-            e.respondWith(
-              fetch(e.request)
-                .then(networkResponse => {
-                  if (networkResponse && networkResponse.status === 200) {
-                    const responseClone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then(cache => cache.put(e.request, responseClone));
-                  }
-                  return networkResponse;
-                })
-                .catch(() => caches.match(e.request))
-            );
-          });
-        `;
-
-        const swBlob = new Blob([swCode], { type: 'text/javascript' });
-        const swURL = URL.callObjectURL(swBlob);
-
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (!refreshing) {
-            refreshing = true;
-            window.location.reload();
-          }
-        });
-
-        navigator.serviceWorker.register(swURL).catch(err => console.error(err));
-      }
-    }
-
-    /* DETECCIÓN AJUSTADA Y PRECISA DE ESTADO APLICACIÓN */
-    function detectDeviceOS() {
-      const isStandaloneMedia = window.matchMedia('(display-mode: standalone)').matches;
-      const isIosStandalone = window.navigator.standalone === true;
-      const isAndroidTwa = document.referrer.startsWith('android-app://');
-
-      const ua = window.navigator.userAgent || window.navigator.vendor || '';
-      const isIosApp = /iPhone|iPad|iPod/.test(ua) && !/Safari/.test(ua);
-
-      const isApp = isStandaloneMedia || isIosStandalone || isAndroidTwa || isIosApp;
-
-      const installBtn = document.getElementById('installBtn');
-
-      if (installBtn) {
-        if (isApp) {
-          installBtn.style.display = 'none';
-          installBtn.classList.add('hidden');
-        } else {
-          installBtn.style.display = 'flex';
-          installBtn.classList.remove('hidden');
-        }
-      }
-
-      if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
-        switchOsTab('ios');
-      } else {
-        switchOsTab('android');
-      }
-    }
-
-    function listenAppInstallEvent() {
-      window.addEventListener('appinstalled', () => {
-        const installBtn = document.getElementById('installBtn');
-        if (installBtn) {
-          installBtn.style.display = 'none';
-          installBtn.classList.add('hidden');
-        }
-        closeInstallModal();
-      });
-    }
-
-    function switchOsTab(os) {
-      const btnIos = document.getElementById('btnTabIos');
-      const btnAndroid = document.getElementById('btnTabAndroid');
-      const iosInst = document.getElementById('iosInstructions');
-      const androidInst = document.getElementById('androidInstructions');
-
-      if (os === 'ios') {
-        btnIos.classList.add('active');
-        btnAndroid.classList.remove('active');
-        iosInst.classList.remove('hidden');
-        androidInst.classList.add('hidden');
-      } else {
-        btnAndroid.classList.add('active');
-        btnIos.classList.remove('active');
-        androidInst.classList.remove('hidden');
-        iosInst.classList.add('hidden');
-      }
-    }
-
-    function openInstallModal() {
-      document.getElementById('installModal').classList.remove('hidden');
-    }
-
-    function closeInstallModal() {
-      document.getElementById('installModal').classList.add('hidden');
-    }
-
-    // Cerrar el desplegable de raza y tooltips al hacer clic fuera
-    document.addEventListener('click', (e) => {
-      const breedContainer = document.getElementById('btnModeBreed');
-      const dropdown = document.getElementById('breedDropdown');
-      if (breedContainer && dropdown && !breedContainer.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.add('hidden');
-      }
-
-      // Ocultar burbujas al tocar fuera
-      if (!e.target.closest('.info-container')) {
-        document.querySelectorAll('.info-tooltip-bubble').forEach(t => {
-          t.classList.remove('visible');
-        });
-      }
-    });
-  </script>
-</body>
-</html>
+          self.addEventListener('install',
