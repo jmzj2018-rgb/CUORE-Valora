@@ -463,46 +463,45 @@
     }
 
     .info-tooltip-bubble {
-  visibility: hidden;
-  opacity: 0;
-  position: absolute;
-  bottom: calc(100% + 8px);
-  /* Cambiamos el centrado rígido para anclar desde la izquierda con un pequeño margen */
-  left: 0;
-  transform: translateY(4px);
-  background-color: #0f172a;
-  color: #ffffff;
-  font-size: 0.72rem;
-  font-weight: 500;
-  padding: 8px 12px;
-  border-radius: 8px;
-  white-space: normal;
-  width: max-content;
-  max-width: 200px; /* Reducimos ligeramente el ancho máximo para pantallas pequeñas */
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
-  pointer-events: none;
-}
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 0;
+      transform: translateY(4px);
+      background-color: #0f172a;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: normal;
+      width: max-content;
+      max-width: 200px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+      pointer-events: none;
+    }
 
-.info-tooltip-bubble::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  /* Alineamos la flechita con el botón ⓘ que está a la izquierda */
-  left: 10px;
-  transform: none;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #0f172a transparent transparent transparent;
-}
+    .info-tooltip-bubble::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 10px;
+      transform: none;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #0f172a transparent transparent transparent;
+    }
 
-.info-tooltip-bubble.visible {
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(0);
-}
+    .info-tooltip-bubble.visible {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* --- MODAL DE INSTALACIÓN MULTIPLATAFORMA --- */
     .modal-overlay {
       position: fixed;
@@ -713,7 +712,7 @@
         
         <div class="single-line-ref">
           <div style="display: flex; align-items: center; gap: 6px;">
-            <!-- ICONO DE INFORMACIÓN PARA REFERENCIA DE NORMALIZADOS (Se eliminó el span con "Ref:") -->
+            <!-- ICONO DE INFORMACIÓN PARA REFERENCIA DE NORMALIZADOS -->
             <div class="info-container">
               <button class="info-icon-btn" onclick="toggleTooltip(event, 'normTooltip')" aria-label="Información de referencia">ⓘ</button>
               <div id="normTooltip" class="info-tooltip-bubble">Ref. Visser, et al (2019)</div>
@@ -779,7 +778,7 @@
   </div>
 
   <script>
-    const APP_VERSION = '1.3.7';
+    const APP_VERSION = '1.3.9';
 
     // Fórmulas alométricas generales (Cornell, et al. 2008)
     const generalCoeffs = [
@@ -839,7 +838,6 @@
     };
 
     // Rangos de referencia proporcionados para el paciente felino.
-    // No se incluye LA (Sx) porque no aparece en la tabla felina compartida.
     const felineRanges = {
       'IVSd':  { min: 0.30, max: 0.59 },
       'LVIDd': { min: 1.08, max: 2.14 },
@@ -851,6 +849,9 @@
 
     const generalFsRange = { min: 28.00, max: 42.00 };
     const felineFsRange = { min: 33.00, max: 66.00 };
+    
+    // Rango de EF fijo independiente de peso, raza y especie
+    const efRange = { min: 50.00, max: 70.00 };
 
     let currentSpecies = 'canine';
     let currentBreedMode = 'general';
@@ -926,7 +927,6 @@
 
       const isVisible = tooltip.classList.contains('visible');
 
-      // Oculta otros tooltips visibles
       document.querySelectorAll('.info-tooltip-bubble').forEach(t => {
         t.classList.remove('visible');
       });
@@ -934,12 +934,10 @@
       if (!isVisible) {
         tooltip.classList.add('visible');
 
-        // Limpia el temporizador anterior si existía
         if (activeTooltipTimers[tooltipId]) {
           clearTimeout(activeTooltipTimers[tooltipId]);
         }
 
-        // Se oculta automáticamente tras 3 segundos (3000ms)
         activeTooltipTimers[tooltipId] = setTimeout(() => {
           tooltip.classList.remove('visible');
         }, 3000);
@@ -964,22 +962,17 @@
       felineBtn.classList.toggle('active', isFeline);
       canineBtn.setAttribute('aria-pressed', String(!isFeline));
       felineBtn.setAttribute('aria-pressed', String(isFeline));
-      subtitle.textContent = isFeline
-        ? 'Modo M en ecocardiografía veterinaria'
-        : 'Modo M en ecocardiografía veterinaria';
+      subtitle.textContent = 'Modo M en ecocardiografía veterinaria';
 
-      // El peso y las fórmulas de raza se utilizan en la sección canina.
       weightCard.classList.toggle('hidden', isFeline);
       weightBadge.classList.toggle('hidden', isFeline);
       breedControls.classList.toggle('hidden', isFeline);
       normTabBtn.classList.toggle('hidden', isFeline);
 
-      // Los parámetros normalizados disponibles en esta versión son caninos.
       if (isFeline && !normalizedTab.classList.contains('hidden')) {
         switchTab('ranges');
       }
 
-      // Al volver a Canino, iniciar en los rangos generales para evitar una raza anterior inesperada.
       if (!isFeline) {
         currentBreedMode = 'general';
         document.getElementById('breedBtnText').textContent = 'Raza ▾';
@@ -1041,7 +1034,6 @@
         btnRanges.classList.add('active');
         btnNorm.classList.remove('active');
 
-        // Al cambiar a la pestaña de "Rangos Absolutos", se borran las memorias
         resetNormMemory();
       } else {
         tabRanges.classList.add('hidden');
@@ -1049,7 +1041,6 @@
         btnNorm.classList.add('active');
         btnRanges.classList.remove('active');
 
-        // Carga la medida correspondiente al parámetro activo
         document.getElementById('measuredX').value = normValuesMemory[selectedNormKey];
         calculateNormalization();
       }
@@ -1095,7 +1086,7 @@
       return `${Number(min).toFixed(2)} - ${Number(max).toFixed(2)} cm`;
     }
 
-    function formatFsRange(range) {
+    function formatPercentRange(range) {
       return `${Number(range.min).toFixed(2)} - ${Number(range.max).toFixed(2)} %`;
     }
 
@@ -1104,13 +1095,15 @@
       const rangeTooltip = document.getElementById('rangeTooltip');
       tbody.innerHTML = '';
 
-      // Rangos felinos: los datos compartidos son intervalos fijos, no dependen del peso.
+      // Rangos felinos
       if (currentSpecies === 'feline') {
         if (rangeTooltip) rangeTooltip.textContent = 'Rangos de referencia felinos proporcionados';
         Object.entries(felineRanges).forEach(([name, range]) => {
           appendRangeRow(tbody, name, formatCmRange(range.min, range.max), true);
         });
-        appendRangeRow(tbody, 'FS', formatFsRange(felineFsRange), true);
+        // EF por encima de FS
+        appendRangeRow(tbody, 'EF', formatPercentRange(efRange), true);
+        appendRangeRow(tbody, 'FS', formatPercentRange(felineFsRange), true);
         return;
       }
 
@@ -1151,7 +1144,10 @@
       });
 
       const fsRange = breedInfo ? breedInfo.fs : generalFsRange;
-      appendRangeRow(tbody, 'FS', formatFsRange(fsRange), true);
+      
+      // EF colocado por encima de FS
+      appendRangeRow(tbody, 'EF', formatPercentRange(efRange), true);
+      appendRangeRow(tbody, 'FS', formatPercentRange(fsRange), true);
     }
 
     function selectNormParam(key) {
@@ -1159,13 +1155,11 @@
       document.querySelectorAll('.norm-param-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById(`btn-${key}`).classList.add('active');
 
-      // Recupera el valor asignado a la nueva pestaña o lo deja vacío
       document.getElementById('measuredX').value = normValuesMemory[selectedNormKey];
       calculateNormalization();
     }
 
     function onMeasuredInput(value) {
-      // Guarda la medición ingresada en la memoria del parámetro actualmente activo
       normValuesMemory[selectedNormKey] = value;
       calculateNormalization();
     }
@@ -1262,7 +1256,6 @@
       }
     }
 
-    /* DETECCIÓN AJUSTADA Y PRECISA DE ESTADO APLICACIÓN */
     function detectDeviceOS() {
       const isStandaloneMedia = window.matchMedia('(display-mode: standalone)').matches;
       const isIosStandalone = window.navigator.standalone === true;
@@ -1330,7 +1323,6 @@
       document.getElementById('installModal').classList.add('hidden');
     }
 
-    // Cerrar el desplegable de raza y tooltips al hacer clic fuera
     document.addEventListener('click', (e) => {
       const breedContainer = document.getElementById('btnModeBreed');
       const dropdown = document.getElementById('breedDropdown');
@@ -1338,7 +1330,6 @@
         dropdown.classList.add('hidden');
       }
 
-      // Ocultar burbujas al tocar fuera
       if (!e.target.closest('.info-container')) {
         document.querySelectorAll('.info-tooltip-bubble').forEach(t => {
           t.classList.remove('visible');
